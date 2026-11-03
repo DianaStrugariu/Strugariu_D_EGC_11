@@ -1,3 +1,4 @@
+using OpenTK.Graphics.ES11;
 using OpenTK.Mathematics;
 
 namespace Egc;
@@ -15,7 +16,9 @@ public class Transform2D
 
     public Matrix4 ModelMatrix =>
         // TODO (T1): scalare, apoi rotație, apoi translație
-        Matrix4.CreateTranslation(Position.X, Position.Y, Depth);
+            Matrix4.CreateScale(Scale.X, Scale.Y, 1)
+          * Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(Rotation))
+          * Matrix4.CreateTranslation(Position.X, Position.Y, Depth);
 
     /// <summary>O copie independentă (folosită pentru readucerea scenei în starea inițială).</summary>
     public Transform2D Clone() => (Transform2D)MemberwiseClone();
