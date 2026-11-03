@@ -15,10 +15,14 @@ public class Transform2D
     public float Depth = 0.0f;                // coordonata z; contează doar în perspectivă (secțiunea 7.2)
 
     public Matrix4 ModelMatrix =>
-        // TODO (T1): scalare, apoi rotație, apoi translație
+          // TODO (T1): scalare, apoi rotație, apoi translație
             Matrix4.CreateScale(Scale.X, Scale.Y, 1)
           * Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(Rotation))
           * Matrix4.CreateTranslation(Position.X, Position.Y, Depth);
+          //T1: Daca translatia ar fi inaintea rotatiei, obiectul s-ar roti fata de originea (0,0) nu
+          //fata de centrul sau, adica ar face un arc de cerc in jurul (0,0) in loc sa se roteasca pe loc
+          
+          
 
     /// <summary>O copie independentă (folosită pentru readucerea scenei în starea inițială).</summary>
     public Transform2D Clone() => (Transform2D)MemberwiseClone();

@@ -102,19 +102,42 @@ public class Game : GameWindow
 
         float dt = (float)args.Time;
         SceneObject sel = _scene[_selected];
-
+        float mult = 1.0f;
+        if (KeyboardState.IsKeyDown(Keys.LeftShift)) mult = 3.0f;
+        
         const float moveSpeed = 2.0f;   // unități de lume pe secundă
-        if (KeyboardState.IsKeyDown(Keys.Left))  sel.Transform.Position.X -= moveSpeed * dt;
-        if (KeyboardState.IsKeyDown(Keys.Right)) sel.Transform.Position.X += moveSpeed * dt;
-        if (KeyboardState.IsKeyDown(Keys.Down))  sel.Transform.Position.Y -= moveSpeed * dt;
-        if (KeyboardState.IsKeyDown(Keys.Up))    sel.Transform.Position.Y += moveSpeed * dt;
+       
+        if (KeyboardState.IsKeyDown(Keys.Left))  sel.Transform.Position.X -= moveSpeed * mult * dt;
+        if (KeyboardState.IsKeyDown(Keys.Right)) sel.Transform.Position.X += moveSpeed * mult * dt;
+        if (KeyboardState.IsKeyDown(Keys.Down))  sel.Transform.Position.Y -= moveSpeed * mult * dt;
+        if (KeyboardState.IsKeyDown(Keys.Up))    sel.Transform.Position.Y += moveSpeed * mult * dt;
 
         // TODO (T2): Q / E rotesc obiectul, Z / X îl scalează
+        // T2: scalarea se face prin inmultire nu prin adunare, ca scara sa nu ajunga la 0 sau negativa
+        // fiindca forma ar fi oglindita. Prin inmultire se apropie de 0 fara sa-l atinga.
 
         if (KeyboardState.IsKeyPressed(Keys.Tab)) _selected = (_selected + 1) % _scene.Count;
         if (KeyboardState.IsKeyPressed(Keys.O))   _camera.IsPerspective = !_camera.IsPerspective;
         if (KeyboardState.IsKeyPressed(Keys.F))   _wireframe = !_wireframe;
         if (KeyboardState.IsKeyPressed(Keys.R))   ResetScene();
+
+        if (KeyboardState.IsKeyDown(Keys.Q)) sel.Transform.Rotation += 90.0f * mult * dt;
+        if (KeyboardState.IsKeyDown(Keys.E)) sel.Transform.Rotation -= 90.0f * mult * dt;
+
+        float factor = MathF.Pow(1.5f, mult * dt);
+        if (KeyboardState.IsKeyDown(Keys.Z))
+        {
+            sel.Transform.Scale.X /= factor;
+            sel.Transform.Scale.Y /= factor;
+        }
+        if (KeyboardState.IsKeyDown(Keys.X))
+        {
+            sel.Transform.Scale.X *= factor;
+            sel.Transform.Scale.Y *= factor;
+        }  
+
+        sel.Transform.Scale.X = Math.Clamp(sel.Transform.Scale.X, 0.1f, 10.0f);
+        sel.Transform.Scale.Y = Math.Clamp(sel.Transform.Scale.Y, 0.1f, 10.0f);
 
         if (KeyboardState.IsKeyPressed(Keys.Tab) || KeyboardState.IsKeyPressed(Keys.O) ||
             KeyboardState.IsKeyPressed(Keys.R))
